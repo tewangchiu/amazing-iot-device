@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Amazing IoT Device{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Device Information</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    System Information
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>OS Name</th>
+                                    <td>{{ system_info.os_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>OS Version</th>
+                                    <td>{{ system_info.os_version }}</td>
+                                </tr>
+                                <tr>
+                                    <th>OS Release</th>
+                                    <td>{{ system_info.os_release }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Device Version</th>
+                                    <td>{{ system_info.device_version }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Python Version</th>
+                                    <td>{{ system_info.python_version }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Hardware Information
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th>Hostname</th>
+                                    <td>{{ system_info.hostname }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Processor</th>
+                                    <td>{{ system_info.processor }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Architecture</th>
+                                    <td>{{ system_info.architecture }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Device Status
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success" role="alert">
+                        Device is online and functioning properly
+                    </div>
+                    <p class="text-muted">Last updated: <span id="current-time"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Update the current time
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('current-time').textContent = now.toLocaleString();
+    }
+    
+    // Update time on page load
+    updateTime();
+    
+    // Update time every second
+    setInterval(updateTime, 1000);
+</script>
+{% endblock %}

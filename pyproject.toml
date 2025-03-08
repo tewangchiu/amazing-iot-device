@@ -1,11 +1,18 @@
 [project]
 name = "amazing-iot-device"
 version = "0.1.0"
-description = ""
+description = "IoT device agent with Flask web interface"
 authors = [
     {name = "Tewang.Chiu", email = "tewang.chiu@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "flask>=2.3.0",
+    "flask-login>=0.6.2",
+    "flask-wtf>=1.1.1",
+    "werkzeug>=2.3.0",
+    "flask-sqlalchemy>=3.0.0",
+    "python-dotenv>=1.0.0",
+]
 requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
@@ -13,3 +20,6 @@ license = {text = "MIT"}
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.pdm.scripts]
+start = "python3 run.py"
