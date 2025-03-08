@@ -1,0 +1,15 @@
+/* Main layout styles */
+.sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: #f8f9fa;
+    padding-top: 20px;
+}
+.content {
+    padding: 20px;
+}
+.nav-link {
+    color: #495057;
+}
+.nav-link.active {
+    background-color: #e9ecef;
+}
