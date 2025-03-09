@@ -13,8 +13,8 @@ services:
       - ./mosquitto/log:/mosquitto/log
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "timeout 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1"]
-      interval: 10s
+      test: ["CMD-SHELL", "timeout 5 mosquitto_sub -u $MQTT_USERNAME -P $MQTT_PASSWORD -t '$$SYS/#' -C 1 | grep -v Error || exit 1"]
+      interval: 30s
       timeout: 10s
       retries: 3
 
