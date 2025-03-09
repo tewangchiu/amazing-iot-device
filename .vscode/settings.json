@@ -4,5 +4,22 @@
             "file": ".github/commit-message/.copilot-commit-message-instructions.md"
         }
     ],
-    "css.validate": false
+    "css.validate": false,
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/.venv/lib/python3.12/site-packages",
+        "${workspaceFolder}/src"
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/.venv/lib/python3.12/site-packages",
+        "${workspaceFolder}/src"
+    ],
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "${workspaceFolder}/.venv/lib/python3.12/site-packages/pytest",
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/.venv/lib/python3.12/site-packages"
+    }
 }

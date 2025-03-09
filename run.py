@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src"
 from amazing_iot_device import create_app
 from amazing_iot_device.auth import init_admin
 from amazing_iot_device.settings import init_default_settings
+from amazing_iot_device.mqtt_service import init_mqtt_service
 
 # Create the Flask application
 app = create_app()
@@ -20,6 +21,9 @@ init_admin(app)
 
 # Initialize default settings
 init_default_settings(app)
+
+# Initialize and start MQTT service
+init_mqtt_service(app)
 
 if __name__ == '__main__':
     # Get port from environment or use default 5000
