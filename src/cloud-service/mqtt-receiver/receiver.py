@@ -32,8 +32,7 @@ MQTT_TOPIC = os.environ.get('MQTT_TOPIC', 'iot/device/#')
 MQTT_CLIENT_ID = os.environ.get('MQTT_CLIENT_ID', f'mqtt-receiver-{time.time()}')
 
 # Storage path for received messages
-DATA_DIR = os.environ.get('DATA_DIR', '/data')
-os.makedirs(DATA_DIR, exist_ok=True)
+DATA_DIR = None
 
 # Callback when the client receives a CONNACK response from the server
 def on_connect(client, userdata, flags, rc):
@@ -73,6 +72,11 @@ def on_message(client, userdata, msg):
 
 def store_data(device_id, topic, timestamp, data):
     """Store received data to disk."""
+    global DATA_DIR
+    # Initialize DATA_DIR if not set
+    if DATA_DIR is None:
+        DATA_DIR = os.environ.get('DATA_DIR', '/data')
+
     # Create device directory if it doesn't exist
     device_dir = os.path.join(DATA_DIR, device_id)
     os.makedirs(device_dir, exist_ok=True)
