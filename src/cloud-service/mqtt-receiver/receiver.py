@@ -11,6 +11,10 @@ import time
 import logging
 from datetime import datetime
 import paho.mqtt.client as mqtt
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -25,7 +29,7 @@ MQTT_BROKER_PORT = int(os.environ.get('MQTT_BROKER_PORT', '1883'))
 MQTT_USERNAME = os.environ.get('MQTT_USERNAME', '')
 MQTT_PASSWORD = os.environ.get('MQTT_PASSWORD', '')
 MQTT_TOPIC = os.environ.get('MQTT_TOPIC', 'iot/device/#')
-MQTT_CLIENT_ID = os.environ.get('MQTT_CLIENT_ID', f'receiver-app-{time.time()}')
+MQTT_CLIENT_ID = os.environ.get('MQTT_CLIENT_ID', f'mqtt-receiver-{time.time()}')
 
 # Storage path for received messages
 DATA_DIR = os.environ.get('DATA_DIR', '/data')
@@ -46,7 +50,7 @@ def on_message(client, userdata, msg):
     topic = msg.topic
     payload = msg.payload.decode('utf-8')
     
-    logger.info(f"Received message on topic {topic}")
+    logger.info(f"Received message on topic {topic}: {payload}")
     
     try:
         # Parse the JSON payload

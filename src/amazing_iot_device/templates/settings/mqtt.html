@@ -32,6 +32,14 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
+                        {{ form.mqtt_client_id.label(class="form-label") }}
+                        {{ form.mqtt_client_id(class="form-control", placeholder="Leave empty for auto-generated ID") }}
+                        <small class="form-text text-muted">Unique identifier for this device. If left blank, a random ID will be generated.</small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
                         {{ form.mqtt_broker_host.label(class="form-label") }}
                         {{ form.mqtt_broker_host(class="form-control") }}
                         {% if form.mqtt_broker_host.errors %}
@@ -114,6 +122,9 @@
             </div>
             
             <div class="mt-3">
+                <h6>Device ID:</h6>
+                <p>{{ mqtt_settings.mqtt_client_id or "Auto-generated" }}</p>
+                
                 <h6>Data being published:</h6>
                 <ul>
                     <li><strong>Topic:</strong> {{ mqtt_settings.mqtt_topic_prefix }}/system</li>

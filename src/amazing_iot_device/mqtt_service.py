@@ -12,11 +12,13 @@ import uuid
 import socket
 import logging
 from datetime import datetime
-
 import paho.mqtt.client as mqtt
-
+from dotenv import load_dotenv
 from amazing_iot_device import db
 from amazing_iot_device.models import Settings
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -31,17 +33,20 @@ class MQTTService:
     def __init__(self, app=None):
         """Initialize the MQTT service."""
         self.client = None
+        # Set a default client_id that will be overridden by settings if available
         self.client_id = f"amazingiot-{uuid.uuid4().hex[:8]}"
         self.app = app
         self.thread = None
         self.is_running = False
         self.publish_interval = 60  # Default interval in seconds
+        
+        # Default settings - will be overridden by .env or database values
         self.broker_settings = {
-            'host': 'localhost',
-            'port': 1883,
-            'username': '',
-            'password': '',
-            'topic_prefix': 'iot/device'
+            'host': os.environ.get('MQTT_BROKER_HOST', 'localhost'),
+            'port': int(os.environ.get('MQTT_BROKER_PORT', '1883')),
+            'username': os.environ.get('MQTT_USERNAME', ''),
+            'password': os.environ.get('MQTT_PASSWORD', ''),
+            'topic_prefix': os.environ.get('MQTT_TOPIC_PREFIX', 'iot/device')
         }
         
         if app is not None:
@@ -64,6 +69,7 @@ class MQTTService:
             Settings.key.in_([
                 'mqtt_broker_host', 
                 'mqtt_broker_port',
+                'mqtt_client_id',
                 'mqtt_username',
                 'mqtt_password',
                 'mqtt_topic_prefix',
@@ -77,6 +83,9 @@ class MQTTService:
         if settings.get('mqtt_broker_port'):
             self.broker_settings['port'] = int(settings.get('mqtt_broker_port'))
             
+        if settings.get('mqtt_client_id'):
+            self.client_id = settings.get('mqtt_client_id')
+
         if settings.get('mqtt_username'):
             self.broker_settings['username'] = settings.get('mqtt_username')
             
@@ -88,7 +97,7 @@ class MQTTService:
             
         if settings.get('mqtt_publish_interval'):
             self.publish_interval = int(settings.get('mqtt_publish_interval'))
-    
+
     def _setup_mqtt_client(self):
         """Set up the MQTT client with callbacks."""
         self.client = mqtt.Client(client_id=self.client_id, clean_session=True)
@@ -257,24 +266,6 @@ mqtt_service = MQTTService()
 def init_mqtt_service(app):
     """Initialize and start the MQTT service."""
     global mqtt_service
-    
-    # Initialize default MQTT settings if they don't exist
-    default_mqtt_settings = {
-        'mqtt_broker_host': 'localhost',
-        'mqtt_broker_port': '1883',
-        'mqtt_username': '',
-        'mqtt_password': '',
-        'mqtt_topic_prefix': 'iot/device',
-        'mqtt_publish_interval': '60',  # seconds
-        'mqtt_enabled': 'true'
-    }
-    
-    with app.app_context():
-        for key, value in default_mqtt_settings.items():
-            if not Settings.query.filter_by(key=key).first():
-                setting = Settings(key=key, value=value)
-                db.session.add(setting)
-        db.session.commit()
     
     # Initialize and start the MQTT service
     mqtt_service.init_app(app)

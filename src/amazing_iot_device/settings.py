@@ -27,6 +27,7 @@ class MQTTSettingsForm(FlaskForm):
     mqtt_username = StringField('Username', validators=[Optional()])
     mqtt_password = PasswordField('Password', validators=[Optional()])
     mqtt_topic_prefix = StringField('Topic Prefix', validators=[DataRequired()])
+    mqtt_client_id = StringField('Client ID', validators=[Optional()])
     mqtt_publish_interval = IntegerField('Publish Interval (seconds)', 
                                          validators=[DataRequired(), NumberRange(min=5, message="Interval must be at least 5 seconds")])
     submit = SubmitField('Save Settings')
@@ -81,6 +82,7 @@ def mqtt():
             'mqtt_enabled',
             'mqtt_broker_host',
             'mqtt_broker_port',
+            'mqtt_client_id',
             'mqtt_username',
             'mqtt_password',
             'mqtt_topic_prefix',
@@ -94,6 +96,7 @@ def mqtt():
             'mqtt_enabled': 'true' if form.mqtt_enabled.data else 'false',
             'mqtt_broker_host': form.mqtt_broker_host.data,
             'mqtt_broker_port': str(form.mqtt_broker_port.data),
+            'mqtt_client_id': form.mqtt_client_id.data,
             'mqtt_username': form.mqtt_username.data,
             'mqtt_password': form.mqtt_password.data,
             'mqtt_topic_prefix': form.mqtt_topic_prefix.data,
@@ -127,6 +130,7 @@ def mqtt():
         form.mqtt_enabled.data = mqtt_settings.get('mqtt_enabled', 'false').lower() == 'true'
         form.mqtt_broker_host.data = mqtt_settings.get('mqtt_broker_host', 'localhost')
         form.mqtt_broker_port.data = int(mqtt_settings.get('mqtt_broker_port', '1883'))
+        form.mqtt_client_id.data = mqtt_settings.get('mqtt_client_id', '')
         form.mqtt_username.data = mqtt_settings.get('mqtt_username', '')
         form.mqtt_password.data = mqtt_settings.get('mqtt_password', '')
         form.mqtt_topic_prefix.data = mqtt_settings.get('mqtt_topic_prefix', 'iot/device')

@@ -18,7 +18,7 @@ services:
       timeout: 10s
       retries: 3
 
-  receiver-app:
+  mqtt-receiver:
     build:
       context: ./mqtt-receiver
       dockerfile: Dockerfile
@@ -30,6 +30,8 @@ services:
       - MQTT_BROKER_PORT=1883
       - MQTT_TOPIC=iot/device/#
       - DATA_DIR=/data
+    env_file:
+      - ./mqtt-receiver/.env
     volumes:
       - ./mqtt-data:/data
     restart: unless-stopped
