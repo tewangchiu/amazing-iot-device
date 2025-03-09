@@ -1,6 +1,6 @@
 [project]
 name = "amazing-iot-device"
-version = "0.1.0"
+version = "0.1.1"
 description = "IoT device agent with Flask web interface"
 authors = [
     {name = "Tewang.Chiu", email = "tewang.chiu@gmail.com"},
