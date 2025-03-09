@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}MQTT Settings - Amazing IoT Device{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>MQTT Settings</h2>
+        <div>
+            <a href="{{ url_for('settings.index') }}" class="btn btn-secondary">Back to Settings</a>
+            {% if mqtt_status %}
+            <span class="badge bg-success ms-2">Connected</span>
+            {% else %}
+            <span class="badge bg-danger ms-2">Disconnected</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST">
+                {{ form.csrf_token }}
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch">
+                            {{ form.mqtt_enabled(class="form-check-input") }}
+                            {{ form.mqtt_enabled.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.mqtt_broker_host.label(class="form-label") }}
+                        {{ form.mqtt_broker_host(class="form-control") }}
+                        {% if form.mqtt_broker_host.errors %}
+                        <div class="text-danger">
+                            {% for error in form.mqtt_broker_host.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.mqtt_broker_port.label(class="form-label") }}
+                        {{ form.mqtt_broker_port(class="form-control") }}
+                        {% if form.mqtt_broker_port.errors %}
+                        <div class="text-danger">
+                            {% for error in form.mqtt_broker_port.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.mqtt_username.label(class="form-label") }}
+                        {{ form.mqtt_username(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.mqtt_password.label(class="form-label") }}
+                        {{ form.mqtt_password(class="form-control") }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        {{ form.mqtt_topic_prefix.label(class="form-label") }}
+                        {{ form.mqtt_topic_prefix(class="form-control") }}
+                        {% if form.mqtt_topic_prefix.errors %}
+                        <div class="text-danger">
+                            {% for error in form.mqtt_topic_prefix.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.mqtt_publish_interval.label(class="form-label") }}
+                        {{ form.mqtt_publish_interval(class="form-control") }}
+                        {% if form.mqtt_publish_interval.errors %}
+                        <div class="text-danger">
+                            {% for error in form.mqtt_publish_interval.errors %}
+                            <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                    <button type="button" class="btn btn-success ms-2" id="test-connection">Test Connection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Last Published Data</h5>
+        </div>
+        <div class="card-body">
+            <div id="mqtt-status">
+                {% if last_published %}
+                <p><strong>Last Published:</strong> {{ last_published }}</p>
+                {% else %}
+                <p class="text-muted">No data has been published yet</p>
+                {% endif %}
+            </div>
+            
+            <div class="mt-3">
+                <h6>Data being published:</h6>
+                <ul>
+                    <li><strong>Topic:</strong> {{ mqtt_settings.mqtt_topic_prefix }}/system</li>
+                    <li><strong>Topic:</strong> {{ mqtt_settings.mqtt_topic_prefix }}/network</li>
+                    <li><strong>Topic:</strong> {{ mqtt_settings.mqtt_topic_prefix }}/resources</li>
+                    <li><strong>Topic:</strong> {{ mqtt_settings.mqtt_topic_prefix }}/full</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('test-connection').addEventListener('click', function() {
+        // Here we would normally make an AJAX call to test the connection
+        // For now, we'll just show an alert
+        alert('Testing connection to MQTT broker at {{ mqtt_settings.mqtt_broker_host }}:{{ mqtt_settings.mqtt_broker_port }}');
+    });
+</script>
+{% endblock %}
