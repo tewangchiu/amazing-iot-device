@@ -255,7 +255,7 @@ class MQTTService:
                 qos=1,
                 retain=False
             )
-            
+            message_info.wait_for_publish()
             if message_info.is_published():
                 logger.info(f"Published to {topic}")
             else:
