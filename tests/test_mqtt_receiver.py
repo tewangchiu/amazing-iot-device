@@ -131,8 +131,8 @@ def test_main(mock_mqtt_client, mock_env_vars):
         
         # Check that client was created and configured correctly
         mock_mqtt_client.username_pw_set.assert_called_once_with('test_user', 'test_password')
-        mock_mqtt_client.on_connect.assert_is(receiver.on_connect)
-        mock_mqtt_client.on_message.assert_is(receiver.on_message)
+        assert mock_mqtt_client.on_connect is receiver.on_connect
+        assert mock_mqtt_client.on_message is receiver.on_message
         mock_mqtt_client.connect.assert_called_once_with('test-broker', 1883, 60)
         mock_mqtt_client.loop_forever.assert_called_once()
         mock_mqtt_client.disconnect.assert_called_once()

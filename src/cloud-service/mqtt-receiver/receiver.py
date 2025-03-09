@@ -23,29 +23,25 @@ logging.basicConfig(
 )
 logger = logging.getLogger('mqtt-receiver')
 
-# MQTT Configuration - read from environment variables with defaults
-MQTT_BROKER_HOST = os.environ.get('MQTT_BROKER_HOST', 'mosquitto')
-MQTT_BROKER_PORT = int(os.environ.get('MQTT_BROKER_PORT', '1883'))
-MQTT_USERNAME = os.environ.get('MQTT_USERNAME', '')
-MQTT_PASSWORD = os.environ.get('MQTT_PASSWORD', '')
-MQTT_TOPIC = os.environ.get('MQTT_TOPIC', 'iot/device/#')
-MQTT_CLIENT_ID = os.environ.get('MQTT_CLIENT_ID', f'mqtt-receiver-{time.time()}')
-
 # Storage path for received messages
 DATA_DIR = None
 
 # Callback when the client receives a CONNACK response from the server
 def on_connect(client, userdata, flags, rc):
+    """Callback for when client receives a CONNACK response from server."""
+    logger = logging.getLogger('mqtt-receiver')
     if rc == 0:
-        logger.info(f"Connected to MQTT broker at {MQTT_BROKER_HOST}:{MQTT_BROKER_PORT}")
+        logger.info(f"Connected to MQTT broker at {userdata['host']}:{userdata['port']}")
         # Subscribe to the topic
-        client.subscribe(MQTT_TOPIC)
-        logger.info(f"Subscribed to topic: {MQTT_TOPIC}")
+        client.subscribe(userdata['topic'])
+        logger.info(f"Subscribed to topic: {userdata['topic']}")
     else:
         logger.error(f"Failed to connect to MQTT broker with code {rc}")
 
 # Callback when a message is received from the server
 def on_message(client, userdata, msg):
+    """Callback when a message is received from the server."""
+    logger = logging.getLogger('mqtt-receiver')
     topic = msg.topic
     payload = msg.payload.decode('utf-8')
     
@@ -96,12 +92,26 @@ def store_data(device_id, topic, timestamp, data):
 
 def main():
     """Main function to run the MQTT client."""
-    # Create MQTT client instance
-    client = mqtt.Client(client_id=MQTT_CLIENT_ID, clean_session=True)
+    logger = logging.getLogger('mqtt-receiver')
+
+    # Load MQTT configuration from environment
+    mqtt_broker_host = os.environ.get('MQTT_BROKER_HOST', 'mosquitto')
+    mqtt_broker_port = int(os.environ.get('MQTT_BROKER_PORT', '1883'))
+    mqtt_username = os.environ.get('MQTT_USERNAME', '')
+    mqtt_password = os.environ.get('MQTT_PASSWORD', '')
+    mqtt_topic = os.environ.get('MQTT_TOPIC', 'iot/device/#')
+    mqtt_client_id = os.environ.get('MQTT_CLIENT_ID', f'mqtt-receiver-{time.time()}')
+    
+    # Create MQTT client instance with config in userdata
+    client = mqtt.Client(client_id=mqtt_client_id, clean_session=True, userdata={
+        'host': mqtt_broker_host,
+        'port': mqtt_broker_port,
+        'topic': mqtt_topic
+    })
     
     # Set up authentication if credentials are provided
-    if MQTT_USERNAME and MQTT_PASSWORD:
-        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+    if mqtt_username and mqtt_password:
+        client.username_pw_set(mqtt_username, mqtt_password)
     
     # Assign callbacks
     client.on_connect = on_connect
@@ -109,8 +119,8 @@ def main():
     
     try:
         # Connect to MQTT broker
-        logger.info(f"Connecting to MQTT broker at {MQTT_BROKER_HOST}:{MQTT_BROKER_PORT}...")
-        client.connect(MQTT_BROKER_HOST, MQTT_BROKER_PORT, 60)
+        logger.info(f"Connecting to MQTT broker at {mqtt_broker_host}:{mqtt_broker_port}...")
+        client.connect(mqtt_broker_host, mqtt_broker_port, 60)
         
         # Start the network loop
         logger.info("Starting MQTT receiver service...")

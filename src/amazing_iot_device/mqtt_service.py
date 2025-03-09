@@ -116,6 +116,7 @@ class MQTTService:
     
     def _on_connect(self, client, userdata, flags, rc):
         """Callback for when the client connects to the broker."""
+        logger = logging.getLogger('mqtt_service')
         if rc == 0:
             logger.info(f"Connected to MQTT broker at {self.broker_settings['host']}:{self.broker_settings['port']}")
         else:
