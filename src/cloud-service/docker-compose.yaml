@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 mosquitto_sub -t '$$SYS/#' -C 1 | grep -v Error || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  receiver-app:
+    build:
+      context: ./mqtt-receiver
+      dockerfile: Dockerfile
+    container_name: mqtt-receiver
+    depends_on:
+      - mosquitto
+    environment:
+      - MQTT_BROKER_HOST=mosquitto
+      - MQTT_BROKER_PORT=1883
+      - MQTT_TOPIC=iot/device/#
+      - DATA_DIR=/data
+    volumes:
+      - ./mqtt-data:/data
+    restart: unless-stopped
+
+volumes:
+  mqtt-data:

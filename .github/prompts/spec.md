@@ -6,6 +6,8 @@
 開發一個安裝於 Linux OS 上的 IoT device agent，device agent內含兩個基礎服務。
 1. 設備上傳服務: 設備將使用 MQTT 協議將硬體資訊上傳到雲端。
 2. 本地監控 Web 應用: Flask 實現一個帶有登入頁面的本地 Web 應用。用戶登入後可以查看基本資訊，如作業系統版本和目前版號等，以及系統資源使用情況。
+3. 提供一個名為 receiver-app 的服務搭配 eclipse-mosquitto MQTT Broker，接收 device agent 上傳的資料。(存放在 src/cloud-service/mqtt-service 內)。
+4. 在 src/cloud-service/docker-compose資料夾內，建立docker-compose.yaml 用來啟動 reveivcer-app 與 eclipse-mosquitto。
 
 ### 2. 技術選型
 - **後端框架**: Flask

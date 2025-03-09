@@ -94,6 +94,7 @@
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary">Save Settings</button>
                     <button type="button" class="btn btn-success ms-2" id="test-connection">Test Connection</button>
+                    <div class="mt-2" id="connection-result" style="display: none;"></div>
                 </div>
             </form>
         </div>
@@ -129,9 +130,42 @@
 {% block scripts %}
 <script>
     document.getElementById('test-connection').addEventListener('click', function() {
-        // Here we would normally make an AJAX call to test the connection
-        // For now, we'll just show an alert
-        alert('Testing connection to MQTT broker at {{ mqtt_settings.mqtt_broker_host }}:{{ mqtt_settings.mqtt_broker_port }}');
+        const host = document.getElementById('mqtt_broker_host').value;
+        const port = document.getElementById('mqtt_broker_port').value;
+        const username = document.getElementById('mqtt_username').value;
+        const password = document.getElementById('mqtt_password').value;
+        const resultDiv = document.getElementById('connection-result');
+        
+        // Show loading message
+        resultDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Testing connection...';
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'alert alert-info mt-2';
+        
+        // Create form data for POST request
+        const formData = new FormData();
+        formData.append('host', host);
+        formData.append('port', port);
+        formData.append('username', username);
+        formData.append('password', password);
+        
+        // Send AJAX request to test connection
+        fetch('{{ url_for("settings.test_mqtt_connection") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display result
+            resultDiv.innerHTML = data.message;
+            resultDiv.className = data.success ? 'alert alert-success mt-2' : 'alert alert-danger mt-2';
+        })
+        .catch(error => {
+            resultDiv.innerHTML = 'Error testing connection: ' + error;
+            resultDiv.className = 'alert alert-danger mt-2';
+        });
     });
 </script>
 {% endblock %}
