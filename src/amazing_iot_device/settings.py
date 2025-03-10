@@ -4,7 +4,7 @@ Settings module for IoT device agent.
 
 import time
 
-import paho.mqtt.client as mqtt_client
+import paho.mqtt.client as paho_mqtt
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import login_required
 from flask_wtf import FlaskForm
@@ -188,7 +188,7 @@ def test_mqtt_connection():
 
     # Create a temporary client for testing
     client_id = f"amazingiot-test-{int(time.time())}"
-    test_client = mqtt_client.Client(client_id=client_id, clean_session=True)
+    test_client = paho_mqtt.Client(client_id=client_id, clean_session=True)
 
     # Set up authentication if credentials are provided
     if username and password:

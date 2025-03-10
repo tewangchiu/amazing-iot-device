@@ -12,7 +12,7 @@ import os
 import time
 from datetime import datetime
 
-import paho.mqtt.client as mqtt_client
+import paho.mqtt.client as paho_mqtt
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -108,7 +108,7 @@ def main():
     mqtt_client_id = os.environ.get("MQTT_CLIENT_ID", f"mqtt-receiver-{time.time()}")
 
     # Create MQTT client instance with config in userdata
-    client = mqtt_client.Client(
+    client = paho_mqtt.Client(
         client_id=mqtt_client_id,
         clean_session=True,
         userdata={"host": mqtt_broker_host, "port": mqtt_broker_port, "topic": mqtt_topic},

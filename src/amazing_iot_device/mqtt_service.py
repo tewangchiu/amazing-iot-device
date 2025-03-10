@@ -14,7 +14,7 @@ import time
 import uuid
 from datetime import datetime
 
-import paho.mqtt.client as mqtt_client
+import paho.mqtt.client as paho_mqtt
 import psutil
 from dotenv import load_dotenv
 
@@ -108,7 +108,7 @@ class MQTTService:
 
     def _setup_mqtt_client(self):
         """Set up the MQTT client with callbacks."""
-        self.client = mqtt_client.Client(client_id=self.client_id, clean_session=True)
+        self.client = paho_mqtt.Client(client_id=self.client_id, clean_session=True)
 
         # Set up callbacks
         self.client.on_connect = self._on_connect
