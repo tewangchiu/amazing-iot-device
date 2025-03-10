@@ -2,8 +2,10 @@
 Tests for MQTT service functionality
 """
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from amazing_iot_device.mqtt_service import MQTTService
 
 
@@ -74,9 +76,7 @@ def test_mqtt_service_with_auth():
         mqtt_service._setup_mqtt_client()
 
         # Check if username_pw_set was called
-        mock_client_instance.username_pw_set.assert_called_once_with(
-            "test_user", "test_password"
-        )
+        mock_client_instance.username_pw_set.assert_called_once_with("test_user", "test_password")
 
 
 @patch("time.sleep", return_value=None)  # To avoid actual sleep in tests
@@ -96,9 +96,7 @@ def test_mqtt_publish_hardware_info(mock_sleep, mock_mqtt_client):
     }
 
     # Mock the _get_hardware_info method
-    with patch.object(
-        mqtt_service, "_get_hardware_info", return_value=sample_hardware_info
-    ):
+    with patch.object(mqtt_service, "_get_hardware_info", return_value=sample_hardware_info):
         # Call the publish method
         mqtt_service._publish_hardware_info()
 
@@ -114,9 +112,7 @@ def test_mqtt_publish_hardware_info(mock_sleep, mock_mqtt_client):
             f"{topic_prefix}/full",
         ]
 
-        actual_topics = [
-            call[1]["topic"] for call in mock_mqtt_client.publish.call_args_list
-        ]
+        actual_topics = [call[1]["topic"] for call in mock_mqtt_client.publish.call_args_list]
         for topic in expected_topics:
             assert topic in actual_topics
 
