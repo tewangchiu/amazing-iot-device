@@ -25,7 +25,36 @@ build-backend = "pdm.backend"
 
 [tool.pdm.scripts]
 start = "python3 run.py"
+fix-style = "ruff check . --fix"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3.5",
+    "ruff>=0.9.10",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "W191",  # indentation contains tabs
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
 ]
