@@ -5,12 +5,13 @@ MQTT Receiver App for Amazing IoT Device
 This application connects to an MQTT broker and receives messages published
 by IoT devices. It processes and stores these messages for later use.
 """
-import os
 import json
-import time
 import logging
+import os
+import time
 from datetime import datetime
-import paho.mqtt.client as mqtt
+
+import paho.mqtt.client as mqtt_client
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -44,23 +45,23 @@ def on_message(client, userdata, msg):
     logger = logging.getLogger('mqtt-receiver')
     topic = msg.topic
     payload = msg.payload.decode('utf-8')
-    
+
     logger.info(f"Received message on topic {topic}: {payload}")
-    
+
     try:
         # Parse the JSON payload
         data = json.loads(payload)
-        
+
         # Extract device ID from the topic if available, otherwise from the data
         topic_parts = topic.split('/')
         device_id = data.get('device_id', topic_parts[-2] if len(topic_parts) > 2 else 'unknown')
-        
+
         # Create a timestamp if not in the data
         timestamp = data.get('timestamp', datetime.now().isoformat())
-        
+
         # Store the data
         store_data(device_id, topic, timestamp, data)
-        
+
     except json.JSONDecodeError:
         logger.error(f"Failed to decode JSON payload: {payload}")
     except Exception as e:
@@ -76,18 +77,18 @@ def store_data(device_id, topic, timestamp, data):
     # Create device directory if it doesn't exist
     device_dir = os.path.join(DATA_DIR, device_id)
     os.makedirs(device_dir, exist_ok=True)
-    
+
     # Format timestamp for filename
     date_str = timestamp.split('T')[0] if 'T' in timestamp else timestamp.split(' ')[0]
-    
+
     # Determine file path based on the topic
     topic_suffix = topic.split('/')[-1]
     file_path = os.path.join(device_dir, f"{date_str}_{topic_suffix}.jsonl")
-    
+
     # Append the data as a new line in the file
     with open(file_path, 'a') as f:
         f.write(json.dumps(data) + '\n')
-    
+
     logger.debug(f"Stored data to {file_path}")
 
 def main():
@@ -101,27 +102,27 @@ def main():
     mqtt_password = os.environ.get('MQTT_PASSWORD', '')
     mqtt_topic = os.environ.get('MQTT_TOPIC', 'iot/device/#')
     mqtt_client_id = os.environ.get('MQTT_CLIENT_ID', f'mqtt-receiver-{time.time()}')
-    
+
     # Create MQTT client instance with config in userdata
-    client = mqtt.Client(client_id=mqtt_client_id, clean_session=True, userdata={
+    client = mqtt_client.Client(client_id=mqtt_client_id, clean_session=True, userdata={
         'host': mqtt_broker_host,
         'port': mqtt_broker_port,
         'topic': mqtt_topic
     })
-    
+
     # Set up authentication if credentials are provided
     if mqtt_username and mqtt_password:
         client.username_pw_set(mqtt_username, mqtt_password)
-    
+
     # Assign callbacks
     client.on_connect = on_connect
     client.on_message = on_message
-    
+
     try:
         # Connect to MQTT broker
         logger.info(f"Connecting to MQTT broker at {mqtt_broker_host}:{mqtt_broker_port}...")
         client.connect(mqtt_broker_host, mqtt_broker_port, 60)
-        
+
         # Start the network loop
         logger.info("Starting MQTT receiver service...")
         client.loop_forever()

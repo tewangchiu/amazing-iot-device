@@ -1,9 +1,6 @@
 """
 Tests for authentication functionality
 """
-import pytest
-from flask import g, session
-from amazing_iot_device.models import User
 
 def test_login_page(client):
     """Test that the login page loads correctly."""
@@ -30,7 +27,7 @@ def test_login_failed(client):
 def test_logout(client, auth):
     """Test logout functionality."""
     auth.login()
-    
+
     response = auth.logout()
     # Should redirect to login page after logout
     assert response.headers['Location'] == '/auth/login'
