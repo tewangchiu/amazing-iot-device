@@ -13,6 +13,8 @@ This project is an IoT device agent with a Flask web interface. It allows users 
 - MQTT data publishing to cloud services
 - Remote device monitoring via MQTT
 
+![IoT Architecture](images/IoT-Architecture.png)
+
 ## Technology Stack
 
 - **Backend Framework**: Flask
