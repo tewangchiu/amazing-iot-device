@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src"
 
 from amazing_iot_device import create_app
 from amazing_iot_device.auth import init_admin
-from amazing_iot_device.settings import init_default_settings
 from amazing_iot_device.mqtt_service import init_mqtt_service
+from amazing_iot_device.settings import init_default_settings
 
 # Create the Flask application
 app = create_app()
