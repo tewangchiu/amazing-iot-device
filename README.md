@@ -122,6 +122,14 @@ The project includes a cloud service component for receiving and storing MQTT da
   - `mqtt-receiver/`: Service to receive and store MQTT data
 - `tests/`: Unit tests
 
+## Screenshots
+
+### Dashboard
+![Dashboard Screenshot](images/Screenshot-Dashboard.png)
+
+### Settings
+![Settings Screenshot](images/Screenshot-Settings.png)
+
 ## License
 
 This project is licensed under the MIT License.
